@@ -394,10 +394,243 @@ const tedTalks = [
 ];
 
 // ============================================
+// CINEMATIC INTRO
+// ============================================
+const CinematicIntro = ({ onComplete }) => {
+  const [phase, setPhase] = useState(0);
+  // 0=dark  1=letters fly in  2=impact  3=name chars  4=tagline  5=exit
+
+  useEffect(() => {
+    const timers = [
+      setTimeout(() => setPhase(1), 250),
+      setTimeout(() => setPhase(2), 1500),
+      setTimeout(() => setPhase(3), 2100),
+      setTimeout(() => setPhase(4), 3400),
+      setTimeout(() => setPhase(5), 5000),
+      setTimeout(onComplete,          5900),
+    ];
+    return () => timers.forEach(clearTimeout);
+  }, [onComplete]);
+
+  const nameChars = ["ג","ב","י"," ","א","ה","ר","ו","ן"];
+  const tagline   = "מרצה לעמידה מול קהל ותקשורת לא מילולית";
+
+  return (
+    <AnimatePresence>
+      {phase < 5 && (
+        <motion.div
+          key="cinematic-intro"
+          className="fixed inset-0 z-[9999] flex flex-col items-center justify-center overflow-hidden select-none"
+          style={{ background: '#050505' }}
+          exit={{ opacity: 0, y: -30 }}
+          transition={{ duration: 0.9, ease: [0.33, 1, 0.68, 1] }}
+        >
+          {/* Ambient pulse after impact */}
+          <motion.div
+            className="absolute inset-0 pointer-events-none"
+            style={{
+              background: 'radial-gradient(ellipse at 50% 50%, rgba(59,130,246,0.12) 0%, transparent 65%)',
+              opacity: 0,
+            }}
+            animate={phase >= 2 ? { opacity: [0, 1, 0.4] } : {}}
+            transition={{ duration: 1.2 }}
+          />
+
+          {/* Shockwave rings on impact */}
+          {phase === 2 && [0, 1, 2, 3].map(i => (
+            <motion.div
+              key={i}
+              className="absolute rounded-full pointer-events-none"
+              style={{
+                border: `${1.5 - i * 0.3}px solid`,
+                borderColor: i % 2 === 0 ? 'rgba(59,130,246,0.5)' : 'rgba(139,92,246,0.4)',
+                left: '50%', top: '50%',
+              }}
+              initial={{ width: 20, height: 20, x: '-50%', y: '-50%', opacity: 1 }}
+              animate={{ width: 700 + i * 120, height: 700 + i * 120, x: '-50%', y: '-50%', opacity: 0 }}
+              transition={{ duration: 1.4, delay: i * 0.12, ease: 'easeOut' }}
+            />
+          ))}
+
+          {/* White flash on impact */}
+          {phase === 2 && (
+            <motion.div
+              className="absolute inset-0 pointer-events-none"
+              style={{ background: 'white', zIndex: 5 }}
+              initial={{ opacity: 0.55 }}
+              animate={{ opacity: 0 }}
+              transition={{ duration: 0.5, ease: 'easeOut' }}
+            />
+          )}
+
+          {/* ===== COMBINED: GA + Name always rendered, animate together ===== */}
+          <div className="flex flex-col items-center gap-6 px-6" style={{ zIndex: 10 }}>
+
+            {/* GA — visible only in phases 1 & 2, fades out in phase 3 */}
+            <motion.div
+              className="relative flex items-center justify-center"
+              style={{ direction: 'ltr', flexDirection: 'row' }}
+              animate={phase >= 3 ? { opacity: 0, scale: 0.85, y: -20 } : { opacity: phase >= 1 ? 1 : 0 }}
+              transition={{ duration: 0.5, ease: [0.33, 1, 0.68, 1] }}
+            >
+              {/* G */}
+              <motion.span
+                style={{
+                  fontSize: 'clamp(130px, 22vw, 240px)',
+                  fontFamily: "'Assistant', sans-serif",
+                  fontWeight: 900,
+                  lineHeight: 1,
+                  background: 'linear-gradient(135deg, #60a5fa 0%, #818cf8 50%, #8b5cf6 100%)',
+                  WebkitBackgroundClip: 'text',
+                  backgroundClip: 'text',
+                  color: 'transparent',
+                  filter: 'drop-shadow(0 0 48px rgba(59,130,246,0.7))',
+                  display: 'inline-block',
+                }}
+                initial={{ x: '-55vw', opacity: 0, scale: 1.3 }}
+                animate={
+                  phase >= 2
+                    ? { x: -4, opacity: 1, scale: 1 }
+                    : phase >= 1
+                    ? { x: '-4vw', opacity: 1, scale: 1 }
+                    : { x: '-55vw', opacity: 0, scale: 1.3 }
+                }
+                transition={
+                  phase >= 2
+                    ? { duration: 0.35, ease: [0.68, -0.55, 0.265, 1.55] }
+                    : { duration: 1.0, ease: [0.33, 1, 0.68, 1] }
+                }
+              >
+                G
+              </motion.span>
+
+              {/* A */}
+              <motion.span
+                style={{
+                  fontSize: 'clamp(130px, 22vw, 240px)',
+                  fontFamily: "'Assistant', sans-serif",
+                  fontWeight: 900,
+                  lineHeight: 1,
+                  background: 'linear-gradient(135deg, #8b5cf6 0%, #818cf8 50%, #60a5fa 100%)',
+                  WebkitBackgroundClip: 'text',
+                  backgroundClip: 'text',
+                  color: 'transparent',
+                  filter: 'drop-shadow(0 0 48px rgba(139,92,246,0.7))',
+                  display: 'inline-block',
+                }}
+                initial={{ x: '55vw', opacity: 0, scale: 1.3 }}
+                animate={
+                  phase >= 2
+                    ? { x: 4, opacity: 1, scale: 1 }
+                    : phase >= 1
+                    ? { x: '4vw', opacity: 1, scale: 1 }
+                    : { x: '55vw', opacity: 0, scale: 1.3 }
+                }
+                transition={
+                  phase >= 2
+                    ? { duration: 0.35, ease: [0.68, -0.55, 0.265, 1.55] }
+                    : { duration: 1.0, delay: 0.08, ease: [0.33, 1, 0.68, 1] }
+                }
+              >
+                A
+              </motion.span>
+            </motion.div>
+
+            {/* Full name — fades in at phase 3, overlapping the GA fade-out */}
+            <motion.div
+              className="flex flex-col items-center gap-5"
+              style={{ position: 'absolute' }}
+              initial={{ opacity: 0, y: 30 }}
+              animate={phase >= 3 ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
+              transition={{ duration: 0.6, ease: [0.33, 1, 0.68, 1] }}
+            >
+              {/* Character-by-character name */}
+              <div className="flex flex-wrap justify-center" style={{ gap: '0.01em', direction: 'rtl', flexDirection: 'row' }}>
+                {nameChars.map((char, i) => (
+                  <motion.span
+                    key={i}
+                    style={{
+                      fontSize: 'clamp(38px, 9vw, 96px)',
+                      fontFamily: "'Assistant', sans-serif",
+                      fontWeight: 900,
+                      lineHeight: 1,
+                      background: 'linear-gradient(135deg, #ffffff 0%, #bfdbfe 40%, #ddd6fe 80%, #ffffff 100%)',
+                      WebkitBackgroundClip: 'text',
+                      backgroundClip: 'text',
+                      color: 'transparent',
+                      display: 'inline-block',
+                      whiteSpace: 'pre',
+                      filter: 'drop-shadow(0 0 20px rgba(96,165,250,0.35))',
+                    }}
+                    initial={{ y: 40, opacity: 0 }}
+                    animate={phase >= 3 ? { y: 0, opacity: 1 } : { y: 40, opacity: 0 }}
+                    transition={{
+                      duration: 0.55,
+                      delay: phase >= 3 ? i * 0.06 : 0,
+                      ease: [0.33, 1, 0.68, 1],
+                    }}
+                  >
+                    {char}
+                  </motion.span>
+                ))}
+              </div>
+
+              {/* Expanding divider */}
+              <motion.div
+                style={{
+                  height: 1,
+                  background: 'linear-gradient(90deg, transparent, rgba(96,165,250,0.8), rgba(139,92,246,0.8), transparent)',
+                  transformOrigin: 'center',
+                  width: '70%',
+                  maxWidth: 420,
+                }}
+                initial={{ scaleX: 0, opacity: 0 }}
+                animate={phase >= 3 ? { scaleX: 1, opacity: 1 } : { scaleX: 0, opacity: 0 }}
+                transition={{ duration: 0.9, delay: 0.6, ease: [0.33, 1, 0.68, 1] }}
+              />
+
+              {/* Tagline */}
+              <motion.p
+                style={{
+                  fontFamily: "'Heebo', sans-serif",
+                  fontSize: 'clamp(15px, 3.2vw, 26px)',
+                  color: '#94a3b8',
+                  letterSpacing: '0.08em',
+                  direction: 'rtl',
+                  textAlign: 'center',
+                  fontWeight: 400,
+                }}
+                initial={{ opacity: 0, y: 18, filter: 'blur(8px)' }}
+                animate={phase >= 4 ? { opacity: 1, y: 0, filter: 'blur(0px)' } : { opacity: 0, y: 18, filter: 'blur(8px)' }}
+                transition={{ duration: 1.1, ease: [0.33, 1, 0.68, 1] }}
+              >
+                {tagline}
+              </motion.p>
+            </motion.div>
+
+          </div>
+
+          {/* Subtle scanline overlay */}
+          <div
+            className="absolute inset-0 pointer-events-none"
+            style={{
+              background: 'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.03) 2px, rgba(0,0,0,0.03) 4px)',
+              zIndex: 1,
+            }}
+          />
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+};
+
+// ============================================
 // MAIN PAGE
 // ============================================
 export default function Home() {
   const { language, setLanguage } = useLanguage();
+  const [introComplete, setIntroComplete] = useState(false);
+  const handleIntroComplete = useCallback(() => setIntroComplete(true), []);
   const [showFlyerModal, setShowFlyerModal] = useState(false);
   const [activeTestimonial, setActiveTestimonial] = useState(0);
   const isMobile = useIsMobile();
@@ -429,6 +662,7 @@ export default function Home() {
         <meta name="description" content={isHebrew ? 'מומחה לשפת גוף ועמידה מול קהל' : 'Body Language & Public Speaking Expert'} />
       </Head>
 
+      <CinematicIntro onComplete={handleIntroComplete} />
       <GlowingOrb />
       <FloatingParticles />
 
