@@ -53,7 +53,22 @@ body {
   width: max-content;
   min-width: 200%;
   animation: ticker-scroll 138s linear infinite;
+  -webkit-animation: ticker-scroll 138s linear infinite;
   will-change: transform;
+  transform: translate3d(0, 0, 0);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+@-webkit-keyframes ticker-scroll {
+  from {
+    -webkit-transform: translate3d(-50%, 0, 0);
+            transform: translate3d(-50%, 0, 0);
+  }
+  to {
+    -webkit-transform: translate3d(0, 0, 0);
+            transform: translate3d(0, 0, 0);
+  }
 }
 
 @keyframes ticker-scroll {
@@ -73,6 +88,9 @@ body {
   }
 
   .ticker-track {
-    animation-duration: 0.01ms !important;
+    animation: ticker-scroll 220s linear infinite !important;
+    -webkit-animation: ticker-scroll 220s linear infinite !important;
+    animation-iteration-count: infinite !important;
+    animation-duration: 220s !important;
   }
 }
