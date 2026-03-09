@@ -528,6 +528,200 @@ const ExpertiseTicker = ({ tips }) => {
   );
 };
 
+const calculateTestimonialGap = (width) => {
+  const minWidth = 768;
+  const maxWidth = 1456;
+  const minGap = 42;
+  const maxGap = 86;
+
+  if (width <= minWidth) return minGap;
+  if (width >= maxWidth) return maxGap;
+
+  return minGap + (maxGap - minGap) * ((width - minWidth) / (maxWidth - minWidth));
+};
+
+const CircularTestimonials = ({ testimonials, language, autoplay = true }) => {
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [containerWidth, setContainerWidth] = useState(1200);
+  const imageContainerRef = useRef(null);
+  const autoplayIntervalRef = useRef(null);
+  const isHebrew = language === "he";
+  const activeTestimonial = testimonials[activeIndex];
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (imageContainerRef.current) {
+        setContainerWidth(imageContainerRef.current.offsetWidth);
+      }
+    };
+
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  const handleNext = useCallback(() => {
+    setActiveIndex((prev) => (prev + 1) % testimonials.length);
+    if (autoplayIntervalRef.current) clearInterval(autoplayIntervalRef.current);
+  }, [testimonials.length]);
+
+  const handlePrev = useCallback(() => {
+    setActiveIndex((prev) => (prev - 1 + testimonials.length) % testimonials.length);
+    if (autoplayIntervalRef.current) clearInterval(autoplayIntervalRef.current);
+  }, [testimonials.length]);
+
+  useEffect(() => {
+    if (!autoplay) return undefined;
+
+    autoplayIntervalRef.current = setInterval(() => {
+      setActiveIndex((prev) => (prev + 1) % testimonials.length);
+    }, 5000);
+
+    return () => {
+      if (autoplayIntervalRef.current) clearInterval(autoplayIntervalRef.current);
+    };
+  }, [autoplay, testimonials.length]);
+
+  useEffect(() => {
+    const handleKey = (e) => {
+      if (e.key === "ArrowLeft") handlePrev();
+      if (e.key === "ArrowRight") handleNext();
+    };
+
+    window.addEventListener("keydown", handleKey);
+    return () => window.removeEventListener("keydown", handleKey);
+  }, [handleNext, handlePrev]);
+
+  const getImageStyle = (index) => {
+    const isMobile = containerWidth < 768;
+    const gap = calculateTestimonialGap(containerWidth);
+    const lift = isMobile ? gap * 0.42 : gap * 0.78;
+    const sideScale = isMobile ? 0.82 : 0.85;
+    const sideRotate = isMobile ? 10 : 15;
+    const sideGap = isMobile ? gap * 0.78 : gap;
+
+    const isActive = index === activeIndex;
+    const isLeft = (activeIndex - 1 + testimonials.length) % testimonials.length === index;
+    const isRight = (activeIndex + 1) % testimonials.length === index;
+
+    if (isActive) {
+      return {
+        zIndex: 3,
+        opacity: 1,
+        pointerEvents: "auto",
+        transform: "translateX(0px) translateY(0px) scale(1) rotateY(0deg)",
+        transition: "all 0.8s cubic-bezier(.4,2,.3,1)",
+      };
+    }
+
+    if (isLeft) {
+      return {
+        zIndex: 2,
+        opacity: 1,
+        pointerEvents: "auto",
+        transform: `translateX(-${sideGap}px) translateY(-${lift}px) scale(${sideScale}) rotateY(${sideRotate}deg)`,
+        transition: "all 0.8s cubic-bezier(.4,2,.3,1)",
+      };
+    }
+
+    if (isRight) {
+      return {
+        zIndex: 2,
+        opacity: 1,
+        pointerEvents: "auto",
+        transform: `translateX(${sideGap}px) translateY(-${lift}px) scale(${sideScale}) rotateY(-${sideRotate}deg)`,
+        transition: "all 0.8s cubic-bezier(.4,2,.3,1)",
+      };
+    }
+
+    return {
+      zIndex: 1,
+      opacity: 0,
+      pointerEvents: "none",
+      transition: "all 0.8s cubic-bezier(.4,2,.3,1)",
+    };
+  };
+
+  return (
+    <div className="mx-auto w-full max-w-6xl px-6" dir={isHebrew ? "rtl" : "ltr"}>
+      <div className="grid items-center gap-14 md:grid-cols-[1.08fr_0.92fr]">
+        <div ref={imageContainerRef} className="relative h-[20rem] w-full perspective-[1000px] sm:h-[23rem] md:h-[27rem]">
+          <motion.div
+            className="absolute inset-[12%] rounded-full bg-[#ffde59]/10 blur-3xl"
+            animate={{ opacity: [0.2, 0.38, 0.2], scale: [1, 1.08, 1] }}
+            transition={{ duration: 7.5, repeat: Infinity, ease: "easeInOut" }}
+          />
+
+          {testimonials.map((testimonial, index) => (
+            <img
+              key={testimonial.image}
+              src={testimonial.image}
+              alt={testimonial.name[language]}
+              className="absolute inset-0 h-full w-full rounded-[2rem] border border-white/10 object-cover shadow-[0_24px_80px_rgba(2,8,23,0.55)]"
+              style={getImageStyle(index)}
+            />
+          ))}
+        </div>
+
+        <div className={`flex flex-col ${isHebrew ? "items-start text-right" : "items-start text-left"}`}>
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={activeIndex}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.35, ease: "easeInOut" }}
+            >
+              <h3 className="text-3xl font-extrabold text-white md:text-4xl">
+                {activeTestimonial.name[language]}
+              </h3>
+              <p className="mt-2 text-sm font-semibold tracking-[0.18em] text-blue-200/70">
+                {activeTestimonial.title[language]}
+              </p>
+              <motion.p className="mt-6 text-lg leading-8 text-slate-300 md:text-xl">
+                {activeTestimonial.content[language].split(" ").map((word, i) => (
+                  <motion.span
+                    key={`${activeIndex}-${i}`}
+                    initial={{ filter: "blur(10px)", opacity: 0, y: 5 }}
+                    animate={{ filter: "blur(0px)", opacity: 1, y: 0 }}
+                    transition={{ duration: 0.22, ease: "easeInOut", delay: 0.025 * i }}
+                    className="inline-block"
+                  >
+                    {word}&nbsp;
+                  </motion.span>
+                ))}
+              </motion.p>
+            </motion.div>
+          </AnimatePresence>
+
+          <div className="mt-10 flex items-center gap-4">
+            <motion.button
+              type="button"
+              onClick={handlePrev}
+              whileHover={{ scale: 1.06, backgroundColor: "#ffde59", color: "#0f172a" }}
+              whileTap={{ scale: 0.96 }}
+              className="flex h-12 w-12 items-center justify-center rounded-full border border-white/12 bg-slate-950 text-white transition-colors"
+              aria-label={isHebrew ? "המלצה קודמת" : "Previous testimonial"}
+            >
+              <ChevronRight className="h-5 w-5" />
+            </motion.button>
+            <motion.button
+              type="button"
+              onClick={handleNext}
+              whileHover={{ scale: 1.06, backgroundColor: "#ffde59", color: "#0f172a" }}
+              whileTap={{ scale: 0.96 }}
+              className="flex h-12 w-12 items-center justify-center rounded-full border border-white/12 bg-slate-950 text-white transition-colors"
+              aria-label={isHebrew ? "המלצה הבאה" : "Next testimonial"}
+            >
+              <ChevronLeft className="h-5 w-5" />
+            </motion.button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 // ============================================
 // MAGNETIC BUTTON
 // ============================================
@@ -630,7 +824,7 @@ const translations = {
       downloadFlyer: "הורידו פלייר"
     },
     about: { title: "קצת עליי", p1: "אני גבי אהרון - מנהל, מהנדס מכונות ואיש של אנשים. בשנים האחרונות עובד עם מגוון רחב של אנשים - בני נוער, יזמים ומורים.", p2: "המטרה שלי היא לחשוף את הפוטנציאל הסמוי שיש בכל אחד מאיתנו להשפיע, לשכנע ולהוביל שינוי.", p3: "היכולת לעמוד מול קהל בביטחון, להשתמש בשפת גוף מדויקת ולהעביר מסר חזק - היא לא רק כלי, היא נשק סודי.", quote: "הבמה הכי גדולה היא החיים עצמם" },
-    testimonials: { title: "מה אומרים עליי", subtitle: "משובים מלקוחות ומשתתפים" },
+    testimonials: { title: "מה אומרים עליי", subtitle: "משובים מלקוחות ומשתתפים", sampleLabel: "דוגמאות זמניות", sampleNote: "יוחלפו בהמלצות אמיתיות בהמשך" },
     ted: { title: "הרצאות TED מומלצות", subtitle: "אוסף מובחר של ההרצאות הכי טובות בנושא שפת גוף ודיבור מול קהל", watch: "צפייה" },
     contact: { title: "בואו נדבר", subtitle: "מעוניינים בהרצאה או סדנה לארגון שלכם? אשמח לשמוע מכם", whatsapp: "שלחו הודעה בוואטסאפ", email: "שלחו מייל", or: "או עקבו אחריי" },
     footer: { rights: "כל הזכויות שמורות", made: "נוצר עם" }
@@ -659,7 +853,7 @@ const translations = {
       downloadFlyer: "Download Flyer"
     },
     about: { title: "About Me", p1: "I'm Gabi Aharon - a manager, mechanical engineer, and people person. In recent years, I've been working with diverse groups - teenagers, entrepreneurs, and educators.", p2: "My mission is to unlock the hidden potential within each of us to influence, persuade, and lead change.", p3: "The ability to stand confidently before an audience, use precise body language, and deliver a powerful message - is not just a tool, it's a secret weapon.", quote: "The biggest stage is life itself" },
-    testimonials: { title: "What They Say", subtitle: "Feedback from clients and participants" },
+    testimonials: { title: "What They Say", subtitle: "Feedback from clients and participants", sampleLabel: "Temporary samples", sampleNote: "To be replaced with real testimonials" },
     ted: { title: "Recommended TED Talks", subtitle: "A curated collection of the best talks on body language and public speaking", watch: "Watch" },
     contact: { title: "Let's Connect", subtitle: "Interested in a lecture or workshop for your organization? I'd love to hear from you", whatsapp: "Message on WhatsApp", email: "Send Email", or: "Or follow me" },
     footer: { rights: "All rights reserved", made: "Made with" }
@@ -670,9 +864,12 @@ const translations = {
 // DATA
 // ============================================
 const testimonialsData = [
-  { id: 1, name: { he: "ד״ר שרה כהן", en: "Dr. Sarah Cohen" }, title: { he: "מנהלת משאבי אנוש", en: "HR Director" }, content: { he: "גבי הוא מרצה יוצא דופן. ההרצאה שלו על שפת גוף שינתה לחלוטין את האופן שבו הצוות שלנו מתנהל. הכלים הפרקטיים מיושמים אצלנו עד היום.", en: "Gabi is an exceptional speaker. His lecture on body language completely changed how our team operates. The practical tools are still being used today." }, image: "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=150&h=150&fit=crop&crop=face" },
-  { id: 2, name: { he: "אורי לוי", en: "Uri Levy" }, title: { he: "מנכ״ל", en: "CEO" }, content: { he: "הזמנתי את גבי להרצות בכנס השנתי שלנו. התגובות היו מדהימות! המשתתפים עדיין מיישמים את הטכניקות. מרצה שיודע להעביר תוכן מורכב בצורה מרתקת.", en: "I invited Gabi to speak at our annual conference. The response was amazing! Participants are still implementing the techniques. A speaker who conveys complex content fascinatingly." }, image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face" },
-  { id: 3, name: { he: "דנה אביב", en: "Dana Aviv" }, title: { he: "מנהלת הדרכות", en: "Training Manager" }, content: { he: "גבי הדריך את מנהלי המכירות שלנו על שפת גוף ונוכחות. התוצאות היו מיידיות - עלייה של 25% בשביעות רצון הלקוחות!", en: "Gabi trained our sales managers on body language and presence. The results were immediate - 25% increase in customer satisfaction!" }, image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop&crop=face" },
+  { id: 1, placeholder: true, name: { he: "ד״ר שרה כהן", en: "Dr. Sarah Cohen" }, title: { he: "מנהלת משאבי אנוש", en: "HR Director" }, content: { he: "גבי הוא מרצה יוצא דופן. ההרצאה שלו על שפת גוף שינתה לחלוטין את האופן שבו הצוות שלנו מתנהל. הכלים הפרקטיים מיושמים אצלנו עד היום.", en: "Gabi is an exceptional speaker. His lecture on body language completely changed how our team operates. The practical tools are still being used today." }, image: "/images/testimonials/sarah-cohen.jpg" },
+  { id: 2, placeholder: true, name: { he: "אורי לוי", en: "Uri Levy" }, title: { he: "מנכ״ל", en: "CEO" }, content: { he: "הזמנתי את גבי להרצות בכנס השנתי שלנו. התגובות היו מדהימות! המשתתפים עדיין מיישמים את הטכניקות. מרצה שיודע להעביר תוכן מורכב בצורה מרתקת.", en: "I invited Gabi to speak at our annual conference. The response was amazing! Participants are still implementing the techniques. A speaker who conveys complex content fascinatingly." }, image: "/images/testimonials/uri-levy.jpg" },
+  { id: 3, placeholder: true, name: { he: "דנה אביב", en: "Dana Aviv" }, title: { he: "מנהלת הדרכות", en: "Training Manager" }, content: { he: "גבי הדריך את מנהלי המכירות שלנו על שפת גוף ונוכחות. התוצאות היו מיידיות - עלייה של 25% בשביעות רצון הלקוחות!", en: "Gabi trained our sales managers on body language and presence. The results were immediate - 25% increase in customer satisfaction!" }, image: "/images/testimonials/dana-aviv.jpg" },
+  { id: 4, placeholder: true, name: { he: "יעל רז", en: "Yael Raz" }, title: { he: "מנהלת פיתוח ארגוני", en: "Organizational Development Lead" }, content: { he: "הסדנה של גבי הייתה מדויקת, חיה ומלאה בדוגמאות מהשטח. אנשים יצאו ממנה עם שפה חדשה לגבי נוכחות וביטחון.", en: "Gabi's workshop was sharp, lively, and full of real-world examples. People left with a new language around presence and confidence." }, image: "/images/testimonials/yael-raz.jpg" },
+  { id: 5, placeholder: true, name: { he: "אמיר שלו", en: "Amir Shalev" }, title: { he: "סמנכ״ל מכירות", en: "VP Sales" }, content: { he: "החיבור בין שפת גוף, מסר וקול עבר בצורה חזקה מאוד. זו אחת ההרצאות הבודדות שהמשתתפים עוד דיברו עליהן גם שבוע אחרי.", en: "The connection between body language, message, and voice landed powerfully. It was one of the few sessions people were still discussing a week later." }, image: "/images/testimonials/amir-shalev.jpg" },
+  { id: 6, placeholder: true, name: { he: "מיכל דרור", en: "Michal Dror" }, title: { he: "מנהלת למידה והדרכה", en: "Learning & Training Manager" }, content: { he: "גבי יצר גם עניין בחדר וגם תחושת מסוגלות. המשתתפים קיבלו כלים פרקטיים שאפשר ליישם מיידית מול קהל ובישיבות.", en: "Gabi created both energy in the room and a sense of capability. Participants got practical tools they could use immediately in presentations and meetings." }, image: "/images/testimonials/michal-dror.jpg" },
 ];
 
 const tedTalks = [
@@ -920,7 +1117,6 @@ export default function Home() {
   const [introComplete, setIntroComplete] = useState(false);
   const handleIntroComplete = useCallback(() => setIntroComplete(true), []);
   const [showFlyerModal, setShowFlyerModal] = useState(false);
-  const [activeTestimonial, setActiveTestimonial] = useState(0);
   const isMobile = useIsMobile();
   const heroRef = useRef(null);
   const { scrollYProgress } = useScroll();
@@ -929,11 +1125,6 @@ export default function Home() {
   const isHebrew = language === 'he';
   const tickerTips = bodyLanguageTips[language];
   const serviceSpotlight = servicesSpotlightContent[language];
-
-  useEffect(() => {
-    const interval = setInterval(() => setActiveTestimonial(p => (p + 1) % testimonialsData.length), 6000);
-    return () => clearInterval(interval);
-  }, []);
 
   const scrollToSection = (id) => document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
 
@@ -1336,36 +1527,19 @@ export default function Home() {
 
         {/* TESTIMONIALS */}
         <section id="testimonials" className="py-24 relative overflow-hidden">
-          <div className="max-w-4xl mx-auto px-6">
+          <div className="relative">
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(96,165,250,0.08),transparent_28%),radial-gradient(circle_at_70%_75%,rgba(255,222,89,0.08),transparent_24%)]" />
             <div className="text-center mb-16">
               <TextReveal>
                 <h2 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-white to-blue-200 bg-clip-text text-transparent">{t.testimonials.title}</h2>
               </TextReveal>
               <motion.p initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} transition={{ delay: 0.3 }} className="text-gray-400 text-lg">{t.testimonials.subtitle}</motion.p>
+              <motion.p initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} transition={{ delay: 0.38 }} className="mt-3 text-sm font-semibold tracking-[0.18em] text-[#ffde59]/80">
+                {t.testimonials.sampleLabel} · {t.testimonials.sampleNote}
+              </motion.p>
             </div>
-            <div className="relative min-h-[320px]">
-              <AnimatePresence mode="wait">
-                {testimonialsData.map((testimonial, index) =>
-                  index === activeTestimonial && (
-                    <motion.div key={testimonial.id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} transition={{ duration: 0.5 }} className="absolute inset-0">
-                      <div className="bg-gradient-to-br from-white/[0.05] to-transparent border border-white/10 rounded-3xl p-8 md:p-10 text-center">
-                        <img src={testimonial.image} alt={testimonial.name[language]} className="w-20 h-20 rounded-full mx-auto mb-6 border-2 border-blue-400/30 object-cover" />
-                        <p className="text-lg md:text-xl text-gray-300 mb-6 leading-relaxed italic">"{testimonial.content[language]}"</p>
-                        <div className="flex items-center justify-center gap-1 mb-3">
-                          {[...Array(5)].map((_, i) => <Star key={i} className="w-4 h-4 text-blue-400 fill-blue-400" />)}
-                        </div>
-                        <h4 className="font-semibold text-white">{testimonial.name[language]}</h4>
-                        <p className="text-sm text-gray-500">{testimonial.title[language]}</p>
-                      </div>
-                    </motion.div>
-                  )
-                )}
-              </AnimatePresence>
-            </div>
-            <div className="flex justify-center gap-2 mt-8">
-              {testimonialsData.map((_, i) => (
-                <button key={i} onClick={() => setActiveTestimonial(i)} className={`rounded-full transition-all duration-300 ${i === activeTestimonial ? 'w-8 h-2 bg-blue-400' : 'w-2 h-2 bg-white/20 hover:bg-white/40'}`} />
-              ))}
+            <div className="relative z-10">
+              <CircularTestimonials testimonials={testimonialsData} language={language} autoplay />
             </div>
           </div>
         </section>

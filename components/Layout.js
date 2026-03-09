@@ -1,5 +1,6 @@
 import React from "react";
 import Head from "next/head";
+import AccessibilityMenu from "./AccessibilityMenu";
 
 export default function Layout({ children, language = 'he' }) {
   return (
@@ -11,7 +12,13 @@ export default function Layout({ children, language = 'he' }) {
           rel="stylesheet"
         />
       </Head>
-      {children}
+      <a className="skip-link" href="#main-content">
+        {language === 'he' ? 'דלגו לתוכן הראשי' : 'Skip to main content'}
+      </a>
+      <main id="main-content">
+        {children}
+      </main>
+      <AccessibilityMenu language={language} />
     </div>
   );
 }
