@@ -140,12 +140,13 @@ export default function AccessibilityMenu({ language = "he" }) {
       <button
         type="button"
         onClick={() => setIsOpen((prev) => !prev)}
-        className={`fixed bottom-5 z-[120] flex h-14 items-center gap-3 rounded-full border border-white/15 bg-slate-950/90 px-5 text-white shadow-[0_20px_50px_rgba(2,8,23,0.45)] backdrop-blur-xl transition-all hover:border-[#ffde59]/40 hover:text-[#ffde59] ${language === "he" ? "left-5" : "right-5"}`}
+        className={`fixed bottom-5 z-[120] flex h-14 w-14 items-center justify-center rounded-full border border-white/15 bg-slate-950/90 text-white shadow-[0_20px_50px_rgba(2,8,23,0.45)] backdrop-blur-xl transition-all hover:border-[#ffde59]/40 hover:text-[#ffde59] md:h-14 md:w-auto md:gap-3 md:px-5 ${language === "he" ? "left-5" : "right-5"}`}
         aria-expanded={isOpen}
         aria-controls="accessibility-panel"
+        aria-label={copy.open}
       >
         <Accessibility className="h-5 w-5" />
-        <span className="text-sm font-bold tracking-[0.14em]">{copy.open}</span>
+        <span className="hidden text-sm font-bold tracking-[0.14em] md:inline">{copy.open}</span>
       </button>
       <aside
         id="accessibility-panel"
