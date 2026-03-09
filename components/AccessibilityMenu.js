@@ -84,6 +84,7 @@ export default function AccessibilityMenu({ language = "he" }) {
   const [isOpen, setIsOpen] = useState(false);
   const [settings, setSettings] = useState(DEFAULT_SETTINGS);
   const panelRef = useRef(null);
+  const triggerRef = useRef(null);
   const copy = useMemo(() => COPY[language] ?? COPY.he, [language]);
 
   useEffect(() => {
@@ -122,6 +123,7 @@ export default function AccessibilityMenu({ language = "he" }) {
 
     const handlePointerDown = (event) => {
       if (!panelRef.current || !isOpen) return;
+      if (triggerRef.current?.contains(event.target)) return;
       if (!panelRef.current.contains(event.target)) {
         setIsOpen(false);
       }
@@ -154,6 +156,7 @@ export default function AccessibilityMenu({ language = "he" }) {
   return (
     <>
       <button
+        ref={triggerRef}
         type="button"
         onClick={() => setIsOpen((prev) => !prev)}
         className={`fixed bottom-5 z-[120] flex h-14 w-14 items-center justify-center rounded-full border border-white/15 bg-slate-950/90 text-white shadow-[0_20px_50px_rgba(2,8,23,0.45)] backdrop-blur-xl transition-all hover:border-[#ffde59]/40 hover:text-[#ffde59] ${language === "he" ? "left-5" : "right-5"}`}
