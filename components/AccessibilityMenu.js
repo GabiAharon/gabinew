@@ -18,7 +18,7 @@ const DEFAULT_SETTINGS = {
 
 const COPY = {
   he: {
-    open: "תפריט נגישות",
+    open: "נגישות",
     title: "נגישות",
     description: "התאמות תצוגה מהירות לנוחות הקריאה והשימוש באתר.",
     textSize: "גודל טקסט",
@@ -38,7 +38,7 @@ const COPY = {
     ],
   },
   en: {
-    open: "Accessibility Menu",
+    open: "Accessibility",
     title: "Accessibility",
     description: "Quick visual adjustments for easier reading and navigation.",
     textSize: "Text size",
