@@ -20,6 +20,7 @@ body {
   scrollbar-width: thin;
   scrollbar-color: #6d28d9 #050505;
   line-height: 1.5;
+  filter: var(--a11y-body-filter, none);
 }
 
 .font-assistant {
@@ -79,14 +80,35 @@ html.a11y-readable-font body *:not(svg):not(path):not(i) {
   letter-spacing: normal !important;
 }
 
-html.a11y-enhanced-contrast body {
-  filter: contrast(1.12) saturate(0.94);
-}
-
 html.a11y-highlight-focus *:focus-visible {
   outline: 3px solid #ffde59 !important;
   outline-offset: 4px !important;
   border-radius: 0.5rem;
+}
+
+html.a11y-line-height p,
+html.a11y-line-height li,
+html.a11y-line-height a,
+html.a11y-line-height button,
+html.a11y-line-height span,
+html.a11y-line-height input,
+html.a11y-line-height textarea,
+html.a11y-line-height label,
+html.a11y-line-height h1,
+html.a11y-line-height h2,
+html.a11y-line-height h3,
+html.a11y-line-height h4,
+html.a11y-line-height h5,
+html.a11y-line-height h6 {
+  line-height: 1.9 !important;
+}
+
+html.a11y-hide-images img,
+html.a11y-hide-images picture,
+html.a11y-hide-images video,
+html.a11y-hide-images canvas,
+html.a11y-hide-images svg {
+  visibility: hidden !important;
 }
 
 .ticker-marquee {

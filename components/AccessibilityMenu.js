@@ -10,6 +10,9 @@ const DEFAULT_SETTINGS = {
   readableFont: false,
   reducedMotion: false,
   highlightFocus: false,
+  grayscale: false,
+  hideImages: false,
+  increasedLineHeight: false,
   userSetHighlightFocus: false,
 };
 
@@ -26,7 +29,10 @@ const COPY = {
     actions: [
       { key: "enhancedContrast", label: "ניגודיות משופרת" },
       { key: "underlineLinks", label: "הדגשת קישורים" },
-      { key: "readableFont", label: "פונט קריא" },
+      { key: "readableFont", label: "תמיכה בדיסלקסיה" },
+      { key: "increasedLineHeight", label: "גובה שורה" },
+      { key: "grayscale", label: "גווני אפור" },
+      { key: "hideImages", label: "הסתרת תמונות" },
       { key: "reducedMotion", label: "הפחתת אנימציות" },
       { key: "highlightFocus", label: "הדגשת פוקוס" },
     ],
@@ -43,7 +49,10 @@ const COPY = {
     actions: [
       { key: "enhancedContrast", label: "Enhanced contrast" },
       { key: "underlineLinks", label: "Underline links" },
-      { key: "readableFont", label: "Readable font" },
+      { key: "readableFont", label: "Dyslexia support" },
+      { key: "increasedLineHeight", label: "Line height" },
+      { key: "grayscale", label: "Grayscale" },
+      { key: "hideImages", label: "Hide images" },
       { key: "reducedMotion", label: "Reduce motion" },
       { key: "highlightFocus", label: "Highlight focus" },
     ],
@@ -57,11 +66,18 @@ const applyAccessibilitySettings = (settings) => {
 
   const root = document.documentElement;
   root.style.setProperty("--site-font-scale", `${settings.fontScale}%`);
+  root.style.setProperty(
+    "--a11y-body-filter",
+    `${settings.enhancedContrast ? "contrast(1.12) saturate(0.94) " : ""}${settings.grayscale ? "grayscale(1)" : ""}`.trim() || "none"
+  );
   root.classList.toggle("a11y-enhanced-contrast", settings.enhancedContrast);
   root.classList.toggle("a11y-underline-links", settings.underlineLinks);
   root.classList.toggle("a11y-readable-font", settings.readableFont);
   root.classList.toggle("a11y-reduced-motion", settings.reducedMotion);
   root.classList.toggle("a11y-highlight-focus", settings.highlightFocus);
+  root.classList.toggle("a11y-hide-images", settings.hideImages);
+  root.classList.toggle("a11y-line-height", settings.increasedLineHeight);
+  root.classList.toggle("a11y-grayscale", settings.grayscale);
 };
 
 export default function AccessibilityMenu({ language = "he" }) {
@@ -140,13 +156,12 @@ export default function AccessibilityMenu({ language = "he" }) {
       <button
         type="button"
         onClick={() => setIsOpen((prev) => !prev)}
-        className={`fixed bottom-5 z-[120] flex h-14 w-14 items-center justify-center rounded-full border border-white/15 bg-slate-950/90 text-white shadow-[0_20px_50px_rgba(2,8,23,0.45)] backdrop-blur-xl transition-all hover:border-[#ffde59]/40 hover:text-[#ffde59] md:h-14 md:w-auto md:gap-3 md:px-5 ${language === "he" ? "left-5" : "right-5"}`}
+        className={`fixed bottom-5 z-[120] flex h-14 w-14 items-center justify-center rounded-full border border-white/15 bg-slate-950/90 text-white shadow-[0_20px_50px_rgba(2,8,23,0.45)] backdrop-blur-xl transition-all hover:border-[#ffde59]/40 hover:text-[#ffde59] ${language === "he" ? "left-5" : "right-5"}`}
         aria-expanded={isOpen}
         aria-controls="accessibility-panel"
         aria-label={copy.open}
       >
         <Accessibility className="h-5 w-5" />
-        <span className="hidden text-sm font-bold tracking-[0.14em] md:inline">{copy.open}</span>
       </button>
       <aside
         id="accessibility-panel"
