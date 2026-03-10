@@ -49,7 +49,7 @@ const lectureImages = [
   { src: "https://i.postimg.cc/ZRMsppxr/IMG-20260113-WA0016.jpg", alt: "Lecture 4" },
 ];
 
-const heroStageImage = "https://images.pexels.com/photos/31129059/pexels-photo-31129059.jpeg?cs=srgb&dl=pexels-kerim-isazade-2148708032-31129059.jpg&fm=jpg";
+const heroStageImage = "https://i.postimg.cc/WbWDF3Cb/hf-20260310-123447-599a997c-13d3-4672-93d6-aa217df4920e.png";
 const heroPortraitImage = "https://i.postimg.cc/hjqSQKms/Untitled-design1.png";
 
 const bodyLanguageTips = {
@@ -801,7 +801,7 @@ const GlowingOrb = () => {
 // ============================================
 const translations = {
   he: {
-    nav: { services: "שירותים", about: "אודות", testimonials: "המלצות", contact: "צור קשר", switchLang: "EN" },
+    nav: { services: "הרצאות", about: "אודות", testimonials: "המלצות", contact: "צור קשר", switchLang: "EN" },
     hero: {
       greeting: "שלום, אני",
       name: "גבי אהרון",
@@ -883,9 +883,15 @@ const tedTalks = [
 // ============================================
 const CinematicIntro = ({ onComplete }) => {
   const [phase, setPhase] = useState(0);
+  const [mounted, setMounted] = useState(false);
   // 0=dark  1=letters fly in  2=impact  3=name chars  4=tagline  5=exit
 
   useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (!mounted) return;
     const timers = [
       setTimeout(() => setPhase(1), 250),
       setTimeout(() => setPhase(2), 1500),
@@ -895,7 +901,9 @@ const CinematicIntro = ({ onComplete }) => {
       setTimeout(onComplete,          5900),
     ];
     return () => timers.forEach(clearTimeout);
-  }, [onComplete]);
+  }, [mounted, onComplete]);
+
+  if (!mounted) return null;
 
   const nameChars = ["ג","ב","י"," ","א","ה","ר","ו","ן"];
   const tagline   = "מרצה לעמידה מול קהל ותקשורת לא מילולית";
