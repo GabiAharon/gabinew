@@ -7,13 +7,13 @@ const CONTENT = {
   he: {
     title: "גבי אהרון | מומחה לשפת גוף ועמידה מול קהל",
     description:
-      "הרצאות וסדנאות לארגונים על שפת גוף, תקשורת לא מילולית ועמידה מול קהל. גבי אהרון מסייע למנהלים, יזמים ואנשי מקצוע להפוך לדוברים בטוחים ומשפיעים.",
+      "הרצאות וסדנאות על שפת גוף, תקשורת לא מילולית ועמידה מול קהל — לארגונים, לצוותים ולבתי ספר. גבי אהרון מלמד איך להפוך את הפחד מקהל לנוכחות שמשפיעה.",
     locale: "he_IL",
   },
   en: {
     title: "Gabi Aharon | Body Language & Public Speaking Expert",
     description:
-      "Lectures and workshops on body language, non-verbal communication and public speaking. Gabi Aharon helps executives, entrepreneurs and professionals become confident, influential speakers.",
+      "Lectures and workshops on body language, non-verbal communication and public speaking — for organizations, teams and schools. Gabi Aharon teaches how to turn stage fright into commanding presence.",
     locale: "en_US",
   },
 };

@@ -20,7 +20,6 @@ import LiveMoments from "../components/sections/LiveMoments";
 import TipsTicker from "../components/sections/TipsTicker";
 import About from "../components/sections/About";
 import Testimonials from "../components/sections/Testimonials";
-import TedTalks from "../components/sections/TedTalks";
 import FinalCta from "../components/sections/FinalCta";
 import Footer from "../components/sections/Footer";
 
@@ -55,7 +54,6 @@ export default function Home() {
           <TipsTicker t={t} language={language} />
           <About t={t} />
           <Testimonials t={t} language={language} />
-          <TedTalks t={t} />
           <FinalCta t={t} language={language} sectionRef={finalCtaRef} />
           <Footer t={t} />
 
