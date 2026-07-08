@@ -100,13 +100,13 @@ export default function Offerings({ t, spotlight, language }) {
           />
         )}
 
-        <div className="relative z-10 mx-auto flex min-h-[64vh] max-w-6xl flex-col justify-end px-6 pb-16 pt-40 md:min-h-[78vh] md:pb-20">
+        <div className="relative z-10 mx-auto flex min-h-[64vh] max-w-4xl flex-col items-center justify-end px-6 pb-16 pt-40 text-center md:min-h-[78vh] md:pb-20">
           <motion.div
             initial={{ opacity: 0, y: 16 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6, ease: EASE }}
-            className="flex flex-wrap items-center gap-3"
+            className="flex flex-wrap items-center justify-center gap-3"
           >
             <span className="rounded-full border border-gold/40 bg-gold px-4 py-1.5 text-xs font-bold tracking-[0.24em] text-ink">
               <bdi>KEYNOTE</bdi>
@@ -117,7 +117,7 @@ export default function Offerings({ t, spotlight, language }) {
           </motion.div>
 
           <h3
-            className="mt-6 max-w-4xl font-assistant-extrabold text-white"
+            className="mt-6 font-assistant-extrabold text-white"
             style={{ fontSize: "clamp(2.5rem, 6.5vw, 4.75rem)", lineHeight: 1.08, textShadow: "0 4px 30px rgba(0,0,0,0.9), 0 2px 10px rgba(0,0,0,0.8)" }}
           >
             <WordRise text={spotlight.signatureTitlePrefix} />
@@ -128,7 +128,7 @@ export default function Offerings({ t, spotlight, language }) {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.7, delay: 0.35, ease: EASE }}
-            className="mt-5 max-w-2xl text-lg leading-relaxed text-slate-100 md:text-xl"
+            className="text-balance mt-5 max-w-2xl text-lg leading-relaxed text-slate-100 md:text-xl"
             style={{ textShadow: "0 2px 14px rgba(0,0,0,0.85)" }}
           >
             {spotlight.signatureBody}
@@ -139,7 +139,7 @@ export default function Offerings({ t, spotlight, language }) {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.7, delay: 0.5, ease: EASE }}
-            className="mt-8 flex flex-wrap items-center gap-x-8 gap-y-3"
+            className="mt-8 flex flex-wrap items-center justify-center gap-x-8 gap-y-3"
           >
             {spotlight.miniPoints.map((point) => (
               <span key={point} className="flex items-center gap-2.5 text-sm font-medium text-slate-200 md:text-base">
