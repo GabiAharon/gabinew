@@ -8,9 +8,14 @@ import { MagneticButton } from "../ui";
 import KineticWord from "../effects/KineticWord";
 import EyeContactPortrait from "../effects/EyeContactPortrait";
 
+// One message, clear hierarchy: a compact byline (who), then the kinetic
+// transformation sentence AS the page headline (what changes), then the
+// promise and the CTAs. Start-aligned editorial column over the stage
+// photo — not a centered stack of competing elements.
 export default function Hero({ t, language }) {
   const ref = useRef(null);
   const { reduced } = useMotionPrefs();
+  const isHebrew = language === "he";
   const { scrollYProgress } = useScroll();
   const heroOpacity = useTransform(scrollYProgress, [0, 0.14], [1, 0]);
 
@@ -25,7 +30,6 @@ export default function Hero({ t, language }) {
 
   return (
     <section ref={ref} className="relative min-h-screen overflow-hidden">
-      {/* Act I stage: darker vignette than a normal hero — the room before the lights */}
       <div className="absolute inset-0">
         <img
           src={heroStageImage}
@@ -33,81 +37,88 @@ export default function Hero({ t, language }) {
           aria-hidden="true"
           className="absolute inset-0 h-full w-full object-cover object-center"
         />
-        <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(5,5,5,0.88)_0%,rgba(5,5,5,0.62)_30%,rgba(5,5,5,0.9)_100%)]" />
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_38%,rgba(255,222,89,0.07),rgba(5,5,5,0.55)_45%,rgba(5,5,5,0.92)_78%)]" />
+        {/* Directional scrim: dark over the text column, photo breathes on the other side */}
+        <div
+          className="absolute inset-0"
+          style={{
+            background: isHebrew
+              ? "linear-gradient(270deg, rgba(5,5,5,0.94) 0%, rgba(5,5,5,0.72) 42%, rgba(5,5,5,0.28) 75%, rgba(5,5,5,0.45) 100%)"
+              : "linear-gradient(90deg, rgba(5,5,5,0.94) 0%, rgba(5,5,5,0.72) 42%, rgba(5,5,5,0.28) 75%, rgba(5,5,5,0.45) 100%)",
+          }}
+        />
+        <div className="absolute inset-x-0 top-0 h-40 bg-gradient-to-b from-ink/90 to-transparent" />
+        <div className="absolute inset-x-0 bottom-0 h-48 bg-gradient-to-t from-ink to-transparent" />
       </div>
 
       <motion.div
-        className="relative z-10 mx-auto flex min-h-screen max-w-5xl flex-col items-center justify-center px-6 pb-24 pt-28 text-center md:pt-32"
+        className="relative z-10 mx-auto flex min-h-screen max-w-6xl items-center px-6 pb-24 pt-28"
         style={reduced ? undefined : { opacity: heroOpacity }}
       >
-        <motion.div {...rise(0)} className="mb-12">
-          <EyeContactPortrait
-            src={heroPortraitImage}
-            alt={t.hero.name}
-            caption={t.hero.eyeCaption}
-          />
-        </motion.div>
-
-        <motion.div {...rise(0.1)} className="mb-5 inline-flex items-center rounded-full border border-white/12 bg-white/5 px-5 py-2 text-sm text-slate-100/88 backdrop-blur-sm">
-          <span className="font-medium">{t.hero.greeting}</span>
-        </motion.div>
-
-        <motion.h1
-          {...rise(0.18)}
-          className="font-assistant-extrabold tracking-tight text-slate-50"
-          style={{ fontSize: "clamp(3rem, 9vw, 6.5rem)", lineHeight: 1.05 }}
-        >
-          {t.hero.name}
-        </motion.h1>
-
-        <motion.h2 {...rise(0.28)} className="mt-3 text-xl font-assistant-extrabold text-slate-100/95 md:text-2xl">
-          {t.hero.title}
-        </motion.h2>
-
-        {/* The emotional centerpiece: the sentence that embodies the transformation */}
-        <motion.div {...rise(0.4)} className="mt-10 w-full">
-          <div className="mb-2 text-[11px] font-semibold uppercase tracking-[0.38em] text-slate-300/50">
-            {t.hero.morphLabel}
-          </div>
-          <div className="flex flex-col items-center gap-2">
-            <span className="text-xl font-medium leading-tight text-slate-200/85 md:text-2xl">
-              {t.hero.morphLead}
-            </span>
-            <KineticWord
-              words={t.hero.morphWords}
-              className="min-h-[4.5rem] md:min-h-[6.5rem]"
-              wordClassName="text-[clamp(2.75rem,8vw,5.5rem)] leading-none"
+        <div className="max-w-2xl text-start">
+          {/* Byline: identity in one compact row */}
+          <motion.div {...rise(0)} className="flex items-center gap-4">
+            <EyeContactPortrait
+              compact
+              src={heroPortraitImage}
+              alt={t.hero.name}
+              caption={t.hero.eyeCaption}
             />
-          </div>
-        </motion.div>
+            <div>
+              <div className="text-xl font-assistant-extrabold leading-tight text-white md:text-2xl">
+                {t.hero.name}
+              </div>
+              <div className="mt-1 text-sm font-semibold tracking-wide text-gold/90 md:text-base">
+                {t.hero.title}
+              </div>
+            </div>
+          </motion.div>
 
-        <motion.p {...rise(0.5)} className="mx-auto mt-8 max-w-2xl text-lg leading-relaxed text-slate-200/80 md:text-xl">
-          {t.hero.subtitle}
-        </motion.p>
-
-        <motion.div {...rise(0.6)} className="mt-9 flex flex-col items-center justify-center gap-4 sm:flex-row">
-          <MagneticButton
-            onClick={() => openWhatsApp("generic", language)}
-            className="group relative overflow-hidden rounded-full bg-gold px-9 py-4 text-lg font-bold text-ink shadow-[0_16px_50px_rgba(255,222,89,0.28)]"
+          {/* The headline IS the transformation sentence */}
+          <motion.h1
+            {...rise(0.15)}
+            className="mt-12 font-assistant-extrabold text-slate-100"
+            style={{ fontSize: "clamp(2.4rem, 5.5vw, 4.5rem)", lineHeight: 1.15 }}
           >
-            <span className="relative z-10 flex items-center gap-2">
-              <MessageCircle className="h-5 w-5" />
-              {t.hero.cta}
+            {t.hero.morphLead}
+            <span className="mt-2 flex min-h-[1.2em] items-baseline">
+              <KineticWord
+                words={t.hero.morphWords}
+                className=""
+                wordClassName="text-[clamp(2.9rem,7vw,5.8rem)] leading-none"
+              />
             </span>
-          </MagneticButton>
-          <MagneticButton
-            onClick={scrollToServices}
-            className="flex items-center gap-2 rounded-full border border-white/20 px-9 py-4 font-medium text-white transition-colors duration-300 hover:bg-white/5"
+          </motion.h1>
+
+          <motion.p
+            {...rise(0.3)}
+            className="mt-8 max-w-xl text-lg leading-relaxed text-slate-300 md:text-xl"
           >
-            {t.hero.ctaSecondary}
-            {!reduced && (
-              <motion.span animate={{ y: [0, 5, 0] }} transition={{ duration: 1.5, repeat: Infinity }}>
-                <ChevronDown className="h-4 w-4" />
-              </motion.span>
-            )}
-          </MagneticButton>
-        </motion.div>
+            {t.hero.subtitle}
+          </motion.p>
+
+          <motion.div {...rise(0.45)} className="mt-10 flex flex-col gap-4 sm:flex-row">
+            <MagneticButton
+              onClick={() => openWhatsApp("generic", language)}
+              className="group relative overflow-hidden rounded-full bg-gold px-9 py-4 text-lg font-bold text-ink shadow-[0_16px_50px_rgba(255,222,89,0.28)]"
+            >
+              <span className="relative z-10 flex items-center justify-center gap-2">
+                <MessageCircle className="h-5 w-5" />
+                {t.hero.cta}
+              </span>
+            </MagneticButton>
+            <MagneticButton
+              onClick={scrollToServices}
+              className="flex items-center justify-center gap-2 rounded-full border border-white/20 px-9 py-4 font-medium text-white transition-colors duration-300 hover:bg-white/5"
+            >
+              {t.hero.ctaSecondary}
+              {!reduced && (
+                <motion.span animate={{ y: [0, 5, 0] }} transition={{ duration: 1.5, repeat: Infinity }}>
+                  <ChevronDown className="h-4 w-4" />
+                </motion.span>
+              )}
+            </MagneticButton>
+          </motion.div>
+        </div>
       </motion.div>
 
       <motion.div

@@ -6,7 +6,7 @@ import { EASE, useMotionPrefs, usePointerFine } from "../../lib/motion";
 // parallax toward the cursor plus a gold catchlight that tracks it. When the
 // cursor lingers near the portrait, the page names what it just did.
 // Touch / reduced motion: static portrait with a one-time gold ring glow.
-export default function EyeContactPortrait({ src, alt, caption }) {
+export default function EyeContactPortrait({ src, alt, caption, compact = false }) {
   const ref = useRef(null);
   const { reduced } = useMotionPrefs();
   const pointerFine = usePointerFine();
@@ -70,9 +70,9 @@ export default function EyeContactPortrait({ src, alt, caption }) {
           className="relative"
           style={enabled ? { rotateY: rotY, rotateX: rotX, transformStyle: "preserve-3d", willChange: "transform" } : undefined}
         >
-          <div className="absolute inset-[-16px] rounded-full bg-[radial-gradient(circle,rgba(255,222,89,0.16),rgba(255,255,255,0))] blur-2xl" />
+          <div className={`absolute rounded-full bg-[radial-gradient(circle,rgba(255,222,89,0.16),rgba(255,255,255,0))] blur-2xl ${compact ? "inset-[-8px]" : "inset-[-16px]"}`} />
           <motion.div
-            className="relative overflow-hidden rounded-full border border-gold/25 bg-ink/70 p-2 shadow-[0_18px_50px_rgba(2,6,23,0.5)] backdrop-blur-md"
+            className={`relative overflow-hidden rounded-full border border-gold/25 bg-ink/70 shadow-[0_18px_50px_rgba(2,6,23,0.5)] backdrop-blur-md ${compact ? "p-1" : "p-2"}`}
             initial={!enabled ? { boxShadow: "0 0 0px rgba(255,222,89,0)" } : undefined}
             whileInView={!enabled ? { boxShadow: "0 0 42px rgba(255,222,89,0.28)" } : undefined}
             viewport={{ once: true }}
@@ -81,12 +81,14 @@ export default function EyeContactPortrait({ src, alt, caption }) {
             <img
               src={src}
               alt={alt}
-              className="h-32 w-32 rounded-full object-cover object-top md:h-40 md:w-40"
+              className={compact
+                ? "h-16 w-16 rounded-full object-cover object-top md:h-20 md:w-20"
+                : "h-32 w-32 rounded-full object-cover object-top md:h-40 md:w-40"}
             />
             {enabled && (
               <motion.div
                 aria-hidden="true"
-                className="absolute left-1/2 top-1/2 h-24 w-24 -translate-x-1/2 -translate-y-1/2 rounded-full"
+                className={`absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full ${compact ? "h-12 w-12" : "h-24 w-24"}`}
                 style={{
                   x: lightX,
                   y: lightY,
