@@ -87,8 +87,10 @@ export default function Offerings({ t, spotlight, language }) {
           loading="lazy"
           className="absolute inset-0 h-full w-full object-cover object-[52%_24%] md:object-[center_22%]"
         />
-        <div className="absolute inset-0 bg-[linear-gradient(180deg,#050505_0%,rgba(5,5,5,0.25)_30%,rgba(5,5,5,0.45)_58%,rgba(5,5,5,0.94)_88%,#050505_100%)]" />
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_35%,transparent_35%,rgba(5,5,5,0.5)_100%)]" />
+        {/* Base wash + a strong lower scrim so the text never drowns in the
+            photo (critical on mobile, where the copy sits over a busy frame) */}
+        <div className="absolute inset-0 bg-[linear-gradient(180deg,#050505_0%,rgba(5,5,5,0.35)_22%,rgba(5,5,5,0.62)_46%,rgba(5,5,5,0.9)_70%,#050505_92%)] md:bg-[linear-gradient(180deg,#050505_0%,rgba(5,5,5,0.22)_28%,rgba(5,5,5,0.45)_54%,rgba(5,5,5,0.9)_86%,#050505_100%)]" />
+        <div className="absolute inset-x-0 bottom-0 h-3/4 bg-gradient-to-t from-ink via-ink/70 to-transparent" />
         {!reduced && (
           <motion.div
             aria-hidden="true"
@@ -106,19 +108,19 @@ export default function Offerings({ t, spotlight, language }) {
             transition={{ duration: 0.6, ease: EASE }}
             className="flex flex-wrap items-center gap-3"
           >
-            <span className="rounded-full border border-gold/30 bg-gold/10 px-4 py-1.5 text-xs font-bold tracking-[0.24em] text-gold backdrop-blur-sm">
+            <span className="rounded-full border border-gold/40 bg-gold px-4 py-1.5 text-xs font-bold tracking-[0.24em] text-ink">
               <bdi>KEYNOTE</bdi>
             </span>
-            <span className="text-xs font-semibold tracking-[0.22em] text-white/70">
-              {spotlight.signatureLabel}
+            <span className="rounded-full border border-gold/40 bg-gold/10 px-4 py-1.5 text-sm font-bold tracking-wide text-gold backdrop-blur-sm">
+              {spotlight.signatureLead}
             </span>
           </motion.div>
 
           <h3
             className="mt-6 max-w-4xl font-assistant-extrabold text-white"
-            style={{ fontSize: "clamp(2.25rem, 6vw, 4.5rem)", lineHeight: 1.08, textShadow: "0 4px 40px rgba(0,0,0,0.6)" }}
+            style={{ fontSize: "clamp(2.5rem, 6.5vw, 4.75rem)", lineHeight: 1.08, textShadow: "0 4px 30px rgba(0,0,0,0.9), 0 2px 10px rgba(0,0,0,0.8)" }}
           >
-            <WordRise text={`"${t.hero.lectureTitle}"`} />
+            <WordRise text={spotlight.signatureTitlePrefix} />
           </h3>
 
           <motion.p
@@ -126,7 +128,8 @@ export default function Offerings({ t, spotlight, language }) {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.7, delay: 0.35, ease: EASE }}
-            className="mt-5 max-w-2xl text-lg leading-relaxed text-slate-200/90 md:text-xl"
+            className="mt-5 max-w-2xl text-lg leading-relaxed text-slate-100 md:text-xl"
+            style={{ textShadow: "0 2px 14px rgba(0,0,0,0.85)" }}
           >
             {spotlight.signatureBody}
           </motion.p>

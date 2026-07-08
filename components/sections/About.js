@@ -37,13 +37,13 @@ export default function About({ t }) {
               </h2>
             </TextReveal>
             <div className="mt-8 space-y-6 text-lg leading-relaxed text-slate-300">
-              {[t.about.p1, t.about.p2, t.about.p3].map((text, i) => (
+              {t.about.paras.map((text, i) => (
                 <motion.p
                   key={i}
                   initial={{ opacity: 0, y: 18 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
-                  transition={{ delay: i * 0.15, duration: 0.7, ease: EASE }}
+                  transition={{ delay: i * 0.12, duration: 0.7, ease: EASE }}
                 >
                   {text}
                 </motion.p>
