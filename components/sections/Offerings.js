@@ -134,19 +134,23 @@ export default function Offerings({ t, spotlight, language }) {
             {spotlight.signatureBody}
           </motion.p>
 
+          {/* Centered as a group, but items share one start edge so the
+              bullets line up on mobile (stacked) and flow inline on desktop */}
           <motion.div
             initial={{ opacity: 0, y: 14 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.7, delay: 0.5, ease: EASE }}
-            className="mt-8 flex flex-wrap items-center justify-center gap-x-8 gap-y-3"
+            className="mt-8 flex justify-center"
           >
-            {spotlight.miniPoints.map((point) => (
-              <span key={point} className="flex items-center gap-2.5 text-sm font-medium text-slate-200 md:text-base">
-                <span className="h-2 w-2 flex-shrink-0 rounded-full bg-gold shadow-[0_0_10px_rgba(255,222,89,0.8)]" />
-                {point}
-              </span>
-            ))}
+            <div className="flex flex-col items-start gap-3 md:flex-row md:flex-wrap md:items-center md:justify-center md:gap-x-8">
+              {spotlight.miniPoints.map((point) => (
+                <span key={point} className="flex items-center gap-2.5 text-sm font-medium text-slate-200 md:text-base">
+                  <span className="h-2 w-2 flex-shrink-0 rounded-full bg-gold shadow-[0_0_10px_rgba(255,222,89,0.8)]" />
+                  {point}
+                </span>
+              ))}
+            </div>
           </motion.div>
         </div>
       </div>
