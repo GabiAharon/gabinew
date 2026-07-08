@@ -15,7 +15,6 @@ import EyeContactPortrait from "../effects/EyeContactPortrait";
 export default function Hero({ t, language }) {
   const ref = useRef(null);
   const { reduced } = useMotionPrefs();
-  const isHebrew = language === "he";
   const { scrollYProgress } = useScroll();
   const heroOpacity = useTransform(scrollYProgress, [0, 0.14], [1, 0]);
 
@@ -37,26 +36,20 @@ export default function Hero({ t, language }) {
           aria-hidden="true"
           className="absolute inset-0 h-full w-full object-cover object-center"
         />
-        {/* Directional scrim: dark over the text column, photo breathes on the other side */}
-        <div
-          className="absolute inset-0"
-          style={{
-            background: isHebrew
-              ? "linear-gradient(270deg, rgba(5,5,5,0.94) 0%, rgba(5,5,5,0.72) 42%, rgba(5,5,5,0.28) 75%, rgba(5,5,5,0.45) 100%)"
-              : "linear-gradient(90deg, rgba(5,5,5,0.94) 0%, rgba(5,5,5,0.72) 42%, rgba(5,5,5,0.28) 75%, rgba(5,5,5,0.45) 100%)",
-          }}
-        />
+        {/* Symmetric vignette: dark center pool for the text, edges breathe */}
+        <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(5,5,5,0.86)_0%,rgba(5,5,5,0.6)_32%,rgba(5,5,5,0.88)_100%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_42%,rgba(5,5,5,0.55),rgba(5,5,5,0.25)_45%,rgba(5,5,5,0.7)_100%)]" />
         <div className="absolute inset-x-0 top-0 h-40 bg-gradient-to-b from-ink/90 to-transparent" />
         <div className="absolute inset-x-0 bottom-0 h-48 bg-gradient-to-t from-ink to-transparent" />
       </div>
 
       <motion.div
-        className="relative z-10 mx-auto flex min-h-screen max-w-6xl items-center px-6 pb-24 pt-28"
+        className="relative z-10 mx-auto flex min-h-screen max-w-6xl items-center justify-center px-6 pb-24 pt-28"
         style={reduced ? undefined : { opacity: heroOpacity }}
       >
-        <div className="max-w-2xl text-start">
-          {/* Byline: identity in one compact row */}
-          <motion.div {...rise(0)} className="flex items-center gap-4">
+        <div className="max-w-3xl text-center">
+          {/* Byline: identity in one compact centered stack */}
+          <motion.div {...rise(0)} className="flex flex-col items-center gap-4">
             <EyeContactPortrait
               compact
               src={heroPortraitImage}
@@ -80,7 +73,7 @@ export default function Hero({ t, language }) {
             style={{ fontSize: "clamp(2.4rem, 5.5vw, 4.5rem)", lineHeight: 1.15 }}
           >
             {t.hero.morphLead}
-            <span className="mt-2 flex min-h-[1.2em] items-baseline">
+            <span className="mt-2 flex min-h-[1.2em] items-baseline justify-center">
               <KineticWord
                 words={t.hero.morphWords}
                 className=""
@@ -91,12 +84,12 @@ export default function Hero({ t, language }) {
 
           <motion.p
             {...rise(0.3)}
-            className="mt-8 max-w-xl text-lg leading-relaxed text-slate-300 md:text-xl"
+            className="mx-auto mt-8 max-w-xl text-lg leading-relaxed text-slate-300 md:text-xl"
           >
             {t.hero.subtitle}
           </motion.p>
 
-          <motion.div {...rise(0.45)} className="mt-10 flex flex-col gap-4 sm:flex-row">
+          <motion.div {...rise(0.45)} className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
             <MagneticButton
               onClick={() => openWhatsApp("generic", language)}
               className="group relative overflow-hidden rounded-full bg-gold px-9 py-4 text-lg font-bold text-ink shadow-[0_16px_50px_rgba(255,222,89,0.28)]"
