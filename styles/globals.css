@@ -6,6 +6,9 @@
 
 html {
   --site-font-scale: 100%;
+  /* Scroll narrative: 0 = act I (fear, dark) → 1 = act III (presence, gold).
+     Written by PresenceProvider on scroll; read by CSS below. */
+  --presence: 0;
 }
 
 html {
@@ -18,9 +21,21 @@ body {
   background-color: #050505;
   color: #ffffff;
   scrollbar-width: thin;
-  scrollbar-color: #6d28d9 #050505;
+  scrollbar-color: #c9a93c #050505;
   line-height: 1.5;
   filter: var(--a11y-body-filter, none);
+}
+
+/* Fixed backdrop whose gold glow grows with scroll progress */
+.presence-backdrop {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background:
+    radial-gradient(58% 42% at 50% 108%, rgba(255, 222, 89, calc(var(--presence) * 0.11)), transparent 72%),
+    radial-gradient(46% 34% at 12% 82%, rgba(255, 222, 89, calc(var(--presence) * 0.05)), transparent 70%),
+    radial-gradient(70% 45% at 50% -8%, rgba(148, 163, 184, calc(0.06 - var(--presence) * 0.05)), transparent 72%);
 }
 
 .font-assistant {
@@ -34,10 +49,10 @@ body {
 
 ::-webkit-scrollbar { width: 6px; }
 ::-webkit-scrollbar-track { background: #1a1a1a; }
-::-webkit-scrollbar-thumb { background: #6d28d9; border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: #a78bfa; }
+::-webkit-scrollbar-thumb { background: #c9a93c; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #ffde59; }
 
-::selection { background-color: #6366f1; color: white; }
+::selection { background-color: #ffde59; color: #050505; }
 
 .rtl { direction: rtl; }
 .ltr { direction: ltr; }
@@ -114,6 +129,16 @@ html.a11y-hide-images svg {
 .ticker-marquee {
   overflow: hidden;
   width: 100%;
+}
+
+.ticker-marquee:hover .ticker-track {
+  animation-play-state: paused;
+  -webkit-animation-play-state: paused;
+}
+
+.ticker-track-reverse {
+  animation-direction: reverse;
+  -webkit-animation-direction: reverse;
 }
 
 .ticker-track {
