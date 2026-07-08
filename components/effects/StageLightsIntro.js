@@ -14,7 +14,7 @@ export default function StageLightsIntro() {
       setShow(false);
       return;
     }
-    // Flag is written when the intro *finishes*, not when it starts —
+    // Flag is written when the intro *finishes*, not when it starts -
     // otherwise StrictMode's double effect-run in dev leaves the overlay
     // stuck (first run arms the timer, cleanup clears it, second run
     // early-returns on the already-set flag).

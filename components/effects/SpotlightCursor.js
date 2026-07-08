@@ -3,7 +3,7 @@ import { motion, useMotionValue, useSpring } from "framer-motion";
 import { useMotionPrefs, usePointerFine, useIsMobile } from "../../lib/motion";
 
 // A gold stage-spotlight that follows the cursor. Motion values + springs
-// only — no setState in the mousemove handler, so no re-renders per frame.
+// only - no setState in the mousemove handler, so no re-renders per frame.
 const SIZE = 560;
 
 export default function SpotlightCursor() {

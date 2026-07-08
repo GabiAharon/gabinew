@@ -11,7 +11,7 @@ import EyeContactPortrait from "../effects/EyeContactPortrait";
 // One message, clear hierarchy: a compact byline (who), then the kinetic
 // transformation sentence AS the page headline (what changes), then the
 // promise and the CTAs. Start-aligned editorial column over the stage
-// photo — not a centered stack of competing elements.
+// photo - not a centered stack of competing elements.
 export default function Hero({ t, language }) {
   const ref = useRef(null);
   const { reduced } = useMotionPrefs();
@@ -86,7 +86,7 @@ export default function Hero({ t, language }) {
 
           <motion.p
             {...rise(0.3)}
-            className="mx-auto mt-8 max-w-xl text-lg leading-relaxed text-slate-300 md:text-xl"
+            className="text-balance mx-auto mt-8 max-w-xl text-lg leading-relaxed text-slate-300 md:text-xl"
           >
             {t.hero.subtitle}
           </motion.p>

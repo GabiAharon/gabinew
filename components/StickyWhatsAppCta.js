@@ -5,7 +5,7 @@ import { EASE } from "../lib/motion";
 import { openWhatsApp } from "../lib/links";
 
 // Floating WhatsApp pill on the logical START edge (RTL: bottom-right,
-// LTR: bottom-left) — the AccessibilityMenu owns the opposite corner.
+// LTR: bottom-left) - the AccessibilityMenu owns the opposite corner.
 // Appears once the hero has scrolled away; hides while the final CTA is on
 // screen so the page never shows two competing WhatsApp buttons.
 export default function StickyWhatsAppCta({ t, language, finalCtaRef }) {

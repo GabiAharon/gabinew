@@ -8,7 +8,7 @@ import { MagneticButton, SectionKicker } from "../ui";
 
 // Editorial theater, not widget boxes: the signature keynote runs full-bleed
 // like a film poster, and the two lectures are typographic "chapters" with
-// giant ghost numerals — rules and whitespace instead of nested cards.
+// giant ghost numerals - rules and whitespace instead of nested cards.
 
 const WordRise = ({ text, className }) => (
   <span className={className}>
@@ -73,13 +73,13 @@ export default function Offerings({ t, spotlight, language }) {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.72, delay: 0.08, ease: EASE }}
-          className="mt-5 text-lg leading-relaxed text-slate-300 md:text-xl"
+          className="text-balance mt-5 text-lg leading-relaxed text-slate-300 md:text-xl"
         >
           {spotlight.promiseSubtitle}
         </motion.p>
       </div>
 
-      {/* Signature keynote — full-bleed cinema poster */}
+      {/* Signature keynote - full-bleed cinema poster */}
       <div className="relative mt-16 w-full overflow-hidden md:mt-20">
         <img
           src={lectureImages[3].src}
@@ -148,7 +148,7 @@ export default function Offerings({ t, spotlight, language }) {
         </div>
       </div>
 
-      {/* The two lectures — typographic chapters, no boxes */}
+      {/* The two lectures - typographic chapters, no boxes */}
       <div className="mx-auto max-w-6xl px-6 pb-24 pt-16 md:pb-32 md:pt-20">
         <motion.p
           initial={{ opacity: 0 }}
@@ -217,7 +217,7 @@ export default function Offerings({ t, spotlight, language }) {
         </div>
       </div>
 
-      {/* Flyer request modal — sends a prefilled WhatsApp message per lecture */}
+      {/* Flyer request modal - sends a prefilled WhatsApp message per lecture */}
       <AnimatePresence>
         {showFlyerModal && (
           <motion.div

@@ -7,7 +7,7 @@ import { lectureImages } from "../../lib/content";
 // "Stage panels": all photos share the full width as strips; the active one
 // expands to take the stage while the others dim and step back. Click (or
 // the auto-cycle) hands the spotlight to the next photo. No dead space, no
-// blur — the transition itself is the show.
+// blur - the transition itself is the show.
 const EXPAND_EASE = "cubic-bezier(0.22, 1, 0.36, 1)";
 
 export default function LiveMoments({ t }) {

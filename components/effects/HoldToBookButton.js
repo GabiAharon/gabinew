@@ -5,7 +5,7 @@ import { useMotionPrefs } from "../../lib/motion";
 import { waLink } from "../../lib/links";
 
 // The site's signature interaction: hold the button ~1.1s to "take the
-// stage" — a conic gold ring fills while held; release early and it springs
+// stage" - a conic gold ring fills while held; release early and it springs
 // back. The micro-lesson: commitment has a threshold. Keyboard users get
 // instant activation on Enter/Space; reduced motion gets a plain button.
 const HOLD_SECONDS = 1.1;

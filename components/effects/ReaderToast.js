@@ -5,7 +5,7 @@ import { EASE } from "../../lib/motion";
 
 // "The page reads you": reacts once to rushed scrolling and once to a long
 // pause in the fear section, with a witty line about what an audience would
-// see. Hard-capped at 2 toasts per browser session — a wink, not a nag.
+// see. Hard-capped at 2 toasts per browser session - a wink, not a nag.
 const SESSION_KEY = "gabiReaderToasts";
 
 export default function ReaderToast({ t, fearRef }) {

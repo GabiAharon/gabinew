@@ -2,7 +2,7 @@ import React, { createContext, useContext, useEffect } from "react";
 import { useScroll, useSpring, useMotionValueEvent } from "framer-motion";
 
 // Drives the three-act scroll narrative. One springed scroll-progress value
-// (0 = fear, 1 = presence) written to the --presence CSS var on <html> —
+// (0 = fear, 1 = presence) written to the --presence CSS var on <html> -
 // a CSS-var write per frame, zero React re-renders.
 const PresenceContext = createContext(null);
 export const usePresence = () => useContext(PresenceContext);

@@ -6,7 +6,7 @@ import { openEmail, INSTAGRAM_URL, LINKEDIN_URL } from "../../lib/links";
 import { MagneticButton } from "../ui";
 import HoldToBookButton from "../effects/HoldToBookButton";
 
-// Act III climax: full presence typography — wide, gold, spacious — and the
+// Act III climax: full presence typography - wide, gold, spacious - and the
 // hold-to-book signature interaction.
 export default function FinalCta({ t, language, sectionRef }) {
   return (
@@ -29,7 +29,7 @@ export default function FinalCta({ t, language, sectionRef }) {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.8, delay: 0.15, ease: EASE }}
-          className="mx-auto mt-6 max-w-xl text-xl leading-relaxed text-slate-300 md:text-2xl"
+          className="text-balance mx-auto mt-6 max-w-xl text-xl leading-relaxed text-slate-300 md:text-2xl"
         >
           {t.finalCta.subtitle}
         </motion.p>

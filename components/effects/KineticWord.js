@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useMotionPrefs, useIsMobile } from "../../lib/motion";
 
-// Embodied typography: each word doesn't just appear — it behaves like its
+// Embodied typography: each word doesn't just appear - it behaves like its
 // meaning. חושש trembles, נלחץ compresses, משפיע takes the stage in gold.
 // Two nested spans keep enter/exit transforms from fighting the behavior
 // loop: the outer span handles enter/exit, the inner span loops the behavior.
@@ -75,7 +75,7 @@ export default function KineticWord({ words, className = "", wordClassName = "" 
   }, [activeIndex, words]);
 
   useEffect(() => {
-    // משפיע holds the stage longest, then the loop restarts from fear —
+    // משפיע holds the stage longest, then the loop restarts from fear -
     // the cycle itself tells the transformation story.
     const holdMs = active.b === "command" ? 3800 : 2300;
     const timer = setTimeout(() => {

@@ -3,8 +3,8 @@ import { motion, useScroll, useTransform } from "framer-motion";
 import { ChevronDown } from "lucide-react";
 import { EASE, useMotionPrefs } from "../../lib/motion";
 
-// Act I set piece: the headline arrives physically compressed — tight
-// letter-spacing, squashed, dim — and *decompresses* as it scrolls into
+// Act I set piece: the headline arrives physically compressed - tight
+// letter-spacing, squashed, dim - and *decompresses* as it scrolls into
 // view. The typography performs the transformation the lecture promises.
 export default function FearToPresence({ t, sectionRef }) {
   const localRef = useRef(null);
@@ -53,7 +53,7 @@ export default function FearToPresence({ t, sectionRef }) {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-80px" }}
           transition={{ duration: 0.8, delay: 0.45, ease: EASE }}
-          className="mx-auto mt-12 max-w-2xl text-2xl font-bold leading-snug text-paper md:text-3xl"
+          className="text-balance mx-auto mt-12 max-w-2xl text-2xl font-bold leading-snug text-paper md:text-3xl"
         >
           {t.fear.pivot}
         </motion.p>
