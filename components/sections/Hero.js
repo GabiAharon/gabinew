@@ -67,17 +67,19 @@ export default function Hero({ t, language }) {
           </motion.div>
 
           {/* The headline IS the transformation sentence */}
-          <motion.h1
-            {...rise(0.15)}
-            className="mt-12 font-assistant-extrabold text-slate-100"
-            style={{ fontSize: "clamp(2.4rem, 5.5vw, 4.5rem)", lineHeight: 1.15 }}
-          >
-            {t.hero.morphLead}
-            <span className="mt-2 flex min-h-[1.2em] items-baseline justify-center">
+          <motion.h1 {...rise(0.15)} className="mt-12 font-assistant-extrabold text-slate-100">
+            {/* The lead sentence always holds one line; it scales down instead of wrapping */}
+            <span
+              className="block whitespace-nowrap"
+              style={{ fontSize: "clamp(1.4rem, 3.4vw, 3rem)", lineHeight: 1.2 }}
+            >
+              {t.hero.morphLead}
+            </span>
+            <span className="mt-3 flex min-h-[1.1em] items-baseline justify-center">
               <KineticWord
                 words={t.hero.morphWords}
                 className=""
-                wordClassName="text-[clamp(2.9rem,7vw,5.8rem)] leading-none"
+                wordClassName="text-[clamp(3rem,7.5vw,6rem)] leading-none"
               />
             </span>
           </motion.h1>
