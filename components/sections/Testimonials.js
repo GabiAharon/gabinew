@@ -1,178 +1,70 @@
-import React, { useState, useEffect, useRef, useCallback } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { ChevronLeft, ChevronRight } from "lucide-react";
-import { useMotionPrefs } from "../../lib/motion";
+import React from "react";
+import { motion } from "framer-motion";
+import { Quote } from "lucide-react";
+import { EASE, useMotionPrefs } from "../../lib/motion";
 import { testimonialsData } from "../../lib/content";
 import { TextReveal } from "../ui";
 
-const calculateGap = (width) => {
-  const minWidth = 768, maxWidth = 1456, minGap = 42, maxGap = 86;
-  if (width <= minWidth) return minGap;
-  if (width >= maxWidth) return maxGap;
-  return minGap + (maxGap - minGap) * ((width - minWidth) / (maxWidth - minWidth));
-};
+// A photo-free quote wall: real words carry the section. Two featured
+// quotes lead in larger type with a gold frame; the rest form a clean
+// grid. Each card signs off with an initial-letter medallion instead of
+// a photo.
+const InitialMedallion = ({ name }) => (
+  <span
+    aria-hidden="true"
+    className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-full border border-gold/40 bg-gold/10 text-lg font-assistant-extrabold text-gold"
+  >
+    {name.trim()[0]}
+  </span>
+);
 
-const CircularTestimonials = ({ testimonials, language }) => {
-  const { reduced } = useMotionPrefs();
-  const [activeIndex, setActiveIndex] = useState(0);
-  const [containerWidth, setContainerWidth] = useState(1200);
-  const [paused, setPaused] = useState(false);
-  const imageContainerRef = useRef(null);
-  const isHebrew = language === "he";
-  const activeTestimonial = testimonials[activeIndex];
-  const PrevIcon = isHebrew ? ChevronRight : ChevronLeft;
-  const NextIcon = isHebrew ? ChevronLeft : ChevronRight;
-
-  useEffect(() => {
-    const handleResize = () => {
-      if (imageContainerRef.current) setContainerWidth(imageContainerRef.current.offsetWidth);
-    };
-    handleResize();
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
-
-  const handleNext = useCallback(() => {
-    setActiveIndex((prev) => (prev + 1) % testimonials.length);
-  }, [testimonials.length]);
-
-  const handlePrev = useCallback(() => {
-    setActiveIndex((prev) => (prev - 1 + testimonials.length) % testimonials.length);
-  }, [testimonials.length]);
-
-  useEffect(() => {
-    if (reduced || paused) return;
-    const interval = setInterval(handleNext, 5000);
-    return () => clearInterval(interval);
-  }, [reduced, paused, handleNext]);
-
-  useEffect(() => {
-    const handleKey = (e) => {
-      if (e.key === "ArrowLeft") (isHebrew ? handleNext : handlePrev)();
-      if (e.key === "ArrowRight") (isHebrew ? handlePrev : handleNext)();
-    };
-    window.addEventListener("keydown", handleKey);
-    return () => window.removeEventListener("keydown", handleKey);
-  }, [handleNext, handlePrev, isHebrew]);
-
-  const getImageStyle = (index) => {
-    const isMobileWidth = containerWidth < 768;
-    const gap = calculateGap(containerWidth);
-    const lift = isMobileWidth ? gap * 0.42 : gap * 0.78;
-    const sideScale = isMobileWidth ? 0.82 : 0.85;
-    const sideRotate = isMobileWidth ? 10 : 15;
-    const sideGap = isMobileWidth ? gap * 0.78 : gap;
-    const transitionCss = reduced ? "none" : "all 0.8s cubic-bezier(.4,2,.3,1)";
-
-    const isActive = index === activeIndex;
-    const isLeft = (activeIndex - 1 + testimonials.length) % testimonials.length === index;
-    const isRight = (activeIndex + 1) % testimonials.length === index;
-
-    if (isActive) {
-      return { zIndex: 3, opacity: 1, pointerEvents: "auto", transform: "translateX(0px) translateY(0px) scale(1) rotateY(0deg)", transition: transitionCss };
-    }
-    if (isLeft) {
-      return { zIndex: 2, opacity: 1, pointerEvents: "auto", transform: `translateX(-${sideGap}px) translateY(-${lift}px) scale(${sideScale}) rotateY(${sideRotate}deg)`, transition: transitionCss };
-    }
-    if (isRight) {
-      return { zIndex: 2, opacity: 1, pointerEvents: "auto", transform: `translateX(${sideGap}px) translateY(-${lift}px) scale(${sideScale}) rotateY(-${sideRotate}deg)`, transition: transitionCss };
-    }
-    return { zIndex: 1, opacity: 0, pointerEvents: "none", transition: transitionCss };
-  };
-
+const TestimonialCard = ({ item, language, index, reduced }) => {
+  const featured = Boolean(item.featured);
   return (
-    <div
-      className="mx-auto w-full max-w-6xl px-6"
-      dir={isHebrew ? "rtl" : "ltr"}
-      onMouseEnter={() => setPaused(true)}
-      onMouseLeave={() => setPaused(false)}
+    <motion.figure
+      initial={reduced ? false : { opacity: 0, y: 24 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-60px" }}
+      transition={{ duration: 0.65, delay: (index % 3) * 0.1, ease: EASE }}
+      className={`group relative flex h-full flex-col rounded-[1.8rem] border p-7 transition-all duration-500 md:p-8 ${
+        featured
+          ? "border-gold/30 bg-gold/[0.05] hover:border-gold/50"
+          : "border-white/10 bg-white/[0.03] hover:border-gold/30"
+      }`}
     >
-      <div className="grid items-center gap-14 md:grid-cols-[1.08fr_0.92fr]">
-        <div ref={imageContainerRef} className="relative h-[20rem] w-full perspective-[1000px] sm:h-[23rem] md:h-[27rem]">
-          <motion.div
-            className="absolute inset-[12%] rounded-full bg-gold/10 blur-3xl"
-            animate={reduced ? undefined : { opacity: [0.2, 0.38, 0.2], scale: [1, 1.08, 1] }}
-            transition={{ duration: 7.5, repeat: Infinity, ease: "easeInOut" }}
-          />
-          {testimonials.map((testimonial, index) => (
-            <img
-              key={testimonial.image}
-              src={testimonial.image}
-              alt={testimonial.name[language]}
-              loading="lazy"
-              className="absolute inset-0 h-full w-full rounded-[2rem] border border-white/10 object-cover shadow-[0_24px_80px_rgba(2,8,23,0.55)]"
-              style={getImageStyle(index)}
-            />
-          ))}
-        </div>
-
-        <div className="flex flex-col items-start text-start">
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={activeIndex}
-              initial={reduced ? { opacity: 0 } : { opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={reduced ? { opacity: 0 } : { opacity: 0, y: -20 }}
-              transition={{ duration: 0.35, ease: "easeInOut" }}
-            >
-              <h3 className="text-3xl font-extrabold text-white md:text-4xl">
-                <bdi>{activeTestimonial.name[language]}</bdi>
-              </h3>
-              <p className="mt-2 text-sm font-semibold tracking-[0.18em] text-gold/70">
-                {activeTestimonial.title[language]}
-              </p>
-              <p className="mt-6 text-lg leading-8 text-slate-300 md:text-xl">
-                {reduced
-                  ? activeTestimonial.content[language]
-                  : activeTestimonial.content[language].split(" ").map((word, i) => (
-                      <motion.span
-                        key={`${activeIndex}-${i}`}
-                        initial={{ filter: "blur(10px)", opacity: 0, y: 5 }}
-                        animate={{ filter: "blur(0px)", opacity: 1, y: 0 }}
-                        transition={{ duration: 0.22, ease: "easeInOut", delay: 0.025 * i }}
-                        className="inline-block"
-                      >
-                        {word}&nbsp;
-                      </motion.span>
-                    ))}
-              </p>
-            </motion.div>
-          </AnimatePresence>
-
-          <div className="mt-10 flex items-center gap-4">
-            <motion.button
-              type="button"
-              onClick={handlePrev}
-              whileHover={{ scale: 1.06, backgroundColor: "#ffde59", color: "#050505" }}
-              whileTap={{ scale: 0.96 }}
-              className="flex h-12 w-12 items-center justify-center rounded-full border border-white/12 bg-ink text-white transition-colors"
-              aria-label={isHebrew ? "המלצה קודמת" : "Previous testimonial"}
-            >
-              <PrevIcon className="h-5 w-5" />
-            </motion.button>
-            <motion.button
-              type="button"
-              onClick={handleNext}
-              whileHover={{ scale: 1.06, backgroundColor: "#ffde59", color: "#050505" }}
-              whileTap={{ scale: 0.96 }}
-              className="flex h-12 w-12 items-center justify-center rounded-full border border-white/12 bg-ink text-white transition-colors"
-              aria-label={isHebrew ? "המלצה הבאה" : "Next testimonial"}
-            >
-              <NextIcon className="h-5 w-5" />
-            </motion.button>
-          </div>
-        </div>
-      </div>
-    </div>
+      <Quote className={`h-6 w-6 -scale-x-100 ${featured ? "text-gold" : "text-gold/50"}`} />
+      <blockquote
+        className={`mt-4 flex-1 leading-relaxed ${
+          featured ? "text-lg font-medium text-slate-100 md:text-xl" : "text-base text-slate-200"
+        }`}
+      >
+        {item.content[language]}
+      </blockquote>
+      <figcaption className="mt-6 flex items-center gap-3 border-t border-white/8 pt-5">
+        <InitialMedallion name={item.name[language]} />
+        <span>
+          <span className="block font-bold leading-tight text-white">
+            <bdi>{item.name[language]}</bdi>
+          </span>
+          <span className="mt-0.5 block text-sm text-gold/80">
+            <bdi>{item.title[language]}</bdi>
+          </span>
+        </span>
+      </figcaption>
+    </motion.figure>
   );
 };
 
 export default function Testimonials({ t, language }) {
+  const { reduced } = useMotionPrefs();
+  const featured = testimonialsData.filter((item) => item.featured);
+  const rest = testimonialsData.filter((item) => !item.featured);
+
   return (
-    <section id="testimonials" className="relative overflow-hidden py-24">
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_75%,rgba(255,222,89,0.06),transparent_28%)]" />
-      <div className="relative">
-        <div className="mb-14 px-6 text-center">
+    <section id="testimonials" className="relative overflow-hidden py-24 md:py-28">
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_20%,rgba(255,222,89,0.05),transparent_35%)]" />
+      <div className="relative mx-auto max-w-6xl px-6">
+        <div className="mb-14 text-center">
           <TextReveal>
             <h2 className="mb-4 font-assistant-extrabold text-white" style={{ fontSize: "clamp(2rem, 5vw, 3.5rem)" }}>
               {t.testimonials.title}
@@ -182,24 +74,23 @@ export default function Testimonials({ t, language }) {
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
-            transition={{ delay: 0.3 }}
-            className="text-lg text-gray-400"
+            transition={{ delay: 0.25 }}
+            className="text-balance text-lg text-gray-400"
           >
             {t.testimonials.subtitle}
           </motion.p>
-          {/* Honesty badge: these are samples until real testimonials arrive */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.38 }}
-            className="mt-4 inline-flex items-center gap-2 rounded-full border border-gold/30 bg-gold/[0.06] px-4 py-1.5 text-xs font-semibold tracking-wide text-gold/90"
-          >
-            {t.testimonials.sampleLabel} · {t.testimonials.sampleNote}
-          </motion.div>
         </div>
-        <div className="relative z-10">
-          <CircularTestimonials testimonials={testimonialsData} language={language} />
+
+        <div className="grid gap-5 md:grid-cols-2">
+          {featured.map((item, i) => (
+            <TestimonialCard key={item.id} item={item} language={language} index={i} reduced={reduced} />
+          ))}
+        </div>
+
+        <div className="mt-5 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+          {rest.map((item, i) => (
+            <TestimonialCard key={item.id} item={item} language={language} index={i} reduced={reduced} />
+          ))}
         </div>
       </div>
     </section>
